@@ -34,9 +34,9 @@ class RecommendationsEndpoint extends EndpointBase {
       'seed_tracks': seedTracks
     }.forEach((key, list) => _addList(parameters, key, list!));
     if (market != null) parameters['market'] = market.name;
-    for (var map in [min, max, target]) {
-      _addTunableTrackMap(parameters, map);
-    }
+    _addTunableTrackMap(parameters, min, TunablePrefixes.min);
+    _addTunableTrackMap(parameters, max, TunablePrefixes.max);
+    _addTunableTrackMap(parameters, target, TunablePrefixes.target);
     final pathQuery = Uri(path: _path, queryParameters: parameters)
         .toString()
         .replaceAll(RegExp(r'%2C'), ',');
@@ -47,11 +47,11 @@ class RecommendationsEndpoint extends EndpointBase {
   /// gets [parameters], a map of the request's uri parameters,
   /// and [tunableTrackMap] a map of tunable Track Attributes.
   /// adds the attributes to [parameters]
-  void _addTunableTrackMap(
-      Map<String, String> parameters, Map<String, num>? tunableTrackMap) {
+  void _addTunableTrackMap(Map<String, String> parameters,
+      Map<String, num>? tunableTrackMap, TunablePrefixes prefix) {
     if (tunableTrackMap != null) {
-      parameters.addAll(tunableTrackMap.map<String, String>((k, v) =>
-          MapEntry(k, v is int ? v.toString() : v.toStringAsFixed(2))));
+      parameters.addAll(tunableTrackMap.map<String, String>((k, v) => MapEntry(
+          '${prefix}_$k', v is int ? v.toString() : v.toStringAsFixed(2))));
     }
   }
 
@@ -63,4 +63,19 @@ class RecommendationsEndpoint extends EndpointBase {
       parameters[key] = paramList.join(',');
     }
   }
+}
+
+class TunablePrefixes {
+  final String value;
+
+  const TunablePrefixes._internal(this.value);
+
+  static const TunablePrefixes min = TunablePrefixes._internal('min');
+  static const TunablePrefixes max = TunablePrefixes._internal('max');
+  static const TunablePrefixes target = TunablePrefixes._internal('target');
+
+  static const List<TunablePrefixes> values = [min, max, target];
+
+  @override
+  String toString() => value;
 }
