@@ -527,6 +527,18 @@ Future main() async {
     });
   });
 
+  group('Recommendations', () {
+    test('recommandations', () async {
+      var result = await spotify.recommendations.get(
+        seedArtists: ['4NHQUG'],
+        min: {'energy': 0.4},
+        max: {'energy': 0.9},
+      );
+
+      expect(result.tracks!.length, 20);
+    });
+  });
+
   group('Auth', () {
     test('getCredentials', () async {
       var result = await spotify.getCredentials();

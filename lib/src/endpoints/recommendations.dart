@@ -32,7 +32,7 @@ class RecommendationsEndpoint extends EndpointBase {
       'seed_artists': seedArtists,
       'seed_genres': seedGenres,
       'seed_tracks': seedTracks
-    }.forEach((key, list) => _addList(parameters, key, list!));
+    }.forEach((key, list) => _addList(parameters, key, list ?? []));
     if (market != null) parameters['market'] = market.name;
     _addTunableTrackMap(parameters, min, TunablePrefixes.min);
     _addTunableTrackMap(parameters, max, TunablePrefixes.max);
